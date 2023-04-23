@@ -9,7 +9,11 @@ const {
   loginAdmin,
   logoutAdmin,
   getAllUsers,
+  deleteUserByAdmin,
+  exportUsers,
 } = require("../controllers/adminControllers");
+const { registerUser } = require("../controllers/usersControllers");
+const isAdmin = require("../middlewares/isAdmin");
 
 adminRouter.use(
   session({
@@ -22,9 +26,10 @@ adminRouter.use(
 );
 adminRouter.post("/login", isLoggedOut, loginAdmin);
 adminRouter.get("/logout", isLoggedIn, logoutAdmin);
+adminRouter.post("/register", formidable(), registerUser);
 adminRouter.get("/dashboard", isLoggedIn, getAllUsers);
 //adminRouter.post("/dashboard", isLoggedIn, createUser);
 //adminRouter.put("/dashboard", isLoggedIn, updateUser);
-//adminRouter.delete("/dashboard", isLoggedIn, deleteUser);
-
+adminRouter.delete("/dashboard/:id", deleteUserByAdmin);
+//adminRouter.get("/dashboard/export-excel-data", exportUsers);
 module.exports = adminRouter;

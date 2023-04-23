@@ -8,6 +8,7 @@ const {
 const User = require("../models/users");
 const dev = require("../config");
 const { sendEmailWithNodeMailer } = require("../helpers/email");
+const { successResponse } = require("../helpers/responseHandler");
 
 const registerUser = async (req, res) => {
   try {
@@ -52,10 +53,16 @@ const registerUser = async (req, res) => {
       `,
     };
     sendEmailWithNodeMailer(emailData);
-    res.status(200).json({
-      message: `A verification email has been sent to ${email}`,
-      token,
-    });
+    successResponse(
+      res,
+      200,
+      `A verification email has been sent to your email`,
+      token
+    );
+    // res.status(200).json({
+    //   message: `A verification email has been sent to ${email}`,
+    //   token,
+    // });
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -90,7 +97,6 @@ const verifyEmail = (req, res) => {
         email,
         phone,
         password,
-        is_verified: true,
       });
 
       if (image) {
@@ -128,10 +134,14 @@ const login = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: "No user found with this email",
+        message: "No user found with this email, please register first",
       });
     }
-
+    if (user.isBanned) {
+      return res.status(401).json({
+        message: "User is banned",
+      });
+    }
     const matchPassword = await comparePassword(password, user.password);
 
     if (!matchPassword) {

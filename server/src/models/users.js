@@ -34,10 +34,6 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  is_verified: {
-    type: Boolean,
-    default: false,
-  },
   createdOn: {
     type: Date,
     default: Date.now,
@@ -45,6 +41,14 @@ const userSchema = new Schema({
   image: {
     data: Buffer,
     contentType: String,
+  },
+  // image: {
+  //   type: String,
+  //   // default: "../public/images/users/paok.jpg",
+  // },
+  isBanned: {
+    type: Boolean,
+    default: false,
   },
 });
 const User = model("users", userSchema);
